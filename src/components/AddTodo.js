@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, TextInput, Button, Alert} from 'react-native'
+import {View, StyleSheet, TextInput, Button, Alert, Keyboard} from 'react-native'
+import {THEME} from "../theme";
 
 export const AddTodo = (props) => {
 
@@ -10,6 +11,7 @@ export const AddTodo = (props) => {
         if (value.trim()) {
             props.addTodo(value)
             setValue('')
+            Keyboard.dismiss()
         } else {
             Alert.alert('Todo can\'t be empty')
         }
@@ -21,8 +23,8 @@ export const AddTodo = (props) => {
             <TextInput style={styles.input}
                        onChangeText={text => setValue(text)}
                        value={value}
-                       placeholder='Enter your task'
-            />
+                       maxLength={64}
+                       placeholder='Enter your task'/>
             <Button title='add' onPress={addTodo}/>
         </View>
     )
@@ -39,7 +41,7 @@ const styles = StyleSheet.create({
         width: '80%',
         borderStyle: 'solid',
         borderBottomWidth: 2,
-        borderBottomColor: 'grey',
+        borderBottomColor: THEME.MAIN_COLOR,
         padding: 5,
     }
 })

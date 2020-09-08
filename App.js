@@ -1,48 +1,37 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, FlatList} from 'react-native';
-import {Navbar} from "./src/Navbar";
-import {AddTodo} from "./src/AddTodo";
-import {Todo} from "./src/Todo";
+import * as Font from 'expo-font'
+import {AppLoading} from "expo";
+import {MainLayout} from "./src/MainLayout";
+import {TodoState} from "./src/context/todo/TodoState";
+import {ScreenState} from "./src/context/screen/ScreenState";
 
-export default function App() {
-    const [todos, setTodos] = useState([])
-
-
-    const addTodo = title => {
-        setTodos(prev => [
-            {
-                id: Date.now().toString(),
-                title
-            },
-            ...prev
-
-        ])
-    }
-
-    const removeTodo = id => {
-        setTodos(prev => prev.filter(todo => todo.id !== id))
-    }
-
-
-    return (
-        <View>
-            <Navbar/>
-            <View style={styles.container}>
-                <AddTodo addTodo={addTodo}/>
-
-                <FlatList
-                keyExtractor={item => item.id}
-                data={todos}
-                renderItem={({item}) => <Todo todo={item} onRemoveTodo={removeTodo}/> }
-                />
-            </View>
-        </View>
-    );
+async function loadApp() {
+    await Font.loadAsync({
+        'roboto-regular': require('./assets/fonts/Roboto-Regular.ttf'),
+        'roboto-bold': require('./assets/fonts/Roboto-Bold.ttf'),
+    })
 }
 
-const styles = StyleSheet.create({
-    container: {
-        paddingHorizontal: 30,
-        paddingVertical: 20,
-    },
-});
+export default function App() {
+    const [isReady, setIsReady] = useState(false)
+
+
+    if (!isReady) {
+        return (
+            <AppLoading startAsync={loadApp}
+                        onFinish={() => setIsReady(true)}
+                        onError={err => console.log(err)}/>
+        )
+    }
+
+
+    return <ScreenState>
+        <TodoState>
+            <MainLayout/>
+        </TodoState>
+    </ScreenState>
+
+
+}
+
+
